@@ -68,7 +68,6 @@
 
         #yesBtn {
             background-color: #ff5266;
-            transition: transform 0.3s ease;
         }
 
         .ghost-no {
@@ -122,6 +121,7 @@
         const detectionRange = 180;
         let missCount = 0;
 
+        // Position the No button exactly over the placeholder on load
         function initNoButton() {
             const rect = placeholder.getBoundingClientRect();
             noBtn.style.left = rect.left + 'px';
@@ -141,11 +141,13 @@
 
             if (distance < detectionRange) {
                 missCount++;
+                
+                // Sassy Text Changes
                 if (missCount > 15) noBtn.innerText = "Give up! ❤️";
                 else if (missCount > 10) noBtn.innerText = "Not a chance!";
                 else if (missCount > 5) noBtn.innerText = "Try Harder!";
 
-                yesBtn.style.transform = `scale(${1 + (missCount * 0.05)})`;
+                // GROWTH REMOVED: yesBtn.style.transform line is gone
 
                 const angle = Math.atan2(mouseY - btnCenterY, mouseX - btnCenterX);
                 let newX = btnCenterX - Math.cos(angle) * 350;
@@ -155,6 +157,7 @@
                 const maxX = window.innerWidth - btnRect.width - padding;
                 const maxY = window.innerHeight - btnRect.height - padding;
 
+                // Corner-proof teleport
                 if (newX <= padding || newX >= maxX || newY <= padding || newY >= maxY) {
                     newX = Math.random() * (window.innerWidth - 200) + 100;
                     newY = Math.random() * (window.innerHeight - 200) + 100;
@@ -189,7 +192,7 @@
                 <p style="font-size:1.5rem; color:#8b3a51;">See you on the 14th, Julie!</p>
             `;
             if(noBtn) noBtn.style.display = 'none';
-            setInterval(createHeart, 150); // Start heart confetti!
+            setInterval(createHeart, 150);
         }
     </script>
 </body>
