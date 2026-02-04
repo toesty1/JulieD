@@ -55,11 +55,12 @@
             font-weight: bold;
             color: white;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            white-space: nowrap; /* Prevents text from wrapping when it changes */
+            white-space: nowrap;
         }
 
         #yesBtn {
             background-color: #ff5266;
+            transition: transform 0.3s ease;
         }
 
         .ghost-no {
@@ -80,17 +81,19 @@
 
     <div class="container" id="main-content">
         <img src="bunny.gif" alt="Cute Bunny Valentine">
-        <h1>Julie, will you be my Valentine?</h1>
+        <h1 id="questionText">Julie, will you be my Valentine?</h1>
         <div class="btn-wrapper">
             <button id="yesBtn" onclick="celebrate()">Yes</button>
-            <div id="no-placeholder" class="ghost-no">Try Harder!</div> <button id="noBtn">No</button>
+            <div id="no-placeholder" class="ghost-no">Not a chance!</div>
+            <button id="noBtn" onclick="clickedNo()">No</button>
         </div>
     </div>
 
     <script>
         const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
         const placeholder = document.getElementById('no-placeholder');
-        const detectionRange = 200;
+        const detectionRange = 180;
         let missCount = 0;
 
         function initNoButton() {
@@ -115,37 +118,49 @@
             if (distance < detectionRange) {
                 missCount++;
 
-                // Change text based on misses
-                if (missCount > 15) {
-                    noBtn.innerText = "Give up! ❤️";
-                } else if (missCount > 10) {
-                    noBtn.innerText = "Not a chance!";
-                } else if (missCount > 5) {
-                    noBtn.innerText = "Try Harder!";
-                }
+                // Sassy text updates
+                if (missCount > 15) noBtn.innerText = "Give up! ❤️";
+                else if (missCount > 10) noBtn.innerText = "Not a chance!";
+                else if (missCount > 5) noBtn.innerText = "Try Harder!";
+
+                // Make the Yes button grow slightly to be more tempting
+                yesBtn.style.transform = `scale(${1 + (missCount * 0.05)})`;
 
                 const angle = Math.atan2(mouseY - btnCenterY, mouseX - btnCenterX);
                 
-                let newX = btnCenterX - Math.cos(angle) * 350; // Increased flee distance
+                let newX = btnCenterX - Math.cos(angle) * 350;
                 let newY = btnCenterY - Math.sin(angle) * 350;
 
-                const padding = 50;
-                newX = Math.max(padding, Math.min(newX, window.innerWidth - btnRect.width - padding));
-                newY = Math.max(padding, Math.min(newY, window.innerHeight - btnRect.height - padding));
+                const padding = 60;
+                const minX = padding;
+                const minY = padding;
+                const maxX = window.innerWidth - btnRect.width - padding;
+                const maxY = window.innerHeight - btnRect.height - padding;
+
+                if (newX <= minX || newX >= maxX || newY <= minY || newY >= maxY) {
+                    newX = Math.random() * (window.innerWidth - 200) + 100;
+                    newY = Math.random() * (window.innerHeight - 200) + 100;
+                }
 
                 noBtn.style.left = `${newX}px`;
                 noBtn.style.top = `${newY}px`;
             }
         });
 
+        // The "Secret Function" for when she actually clicks No
+        function clickedNo() {
+            alert("Error: 'No' button is currently out of service. Please select 'Yes' to continue. ❤️");
+            noBtn.style.display = 'none'; // Button vanishes forever
+        }
+
         function celebrate() {
             const content = document.getElementById('main-content');
             content.innerHTML = `
                 <img src="bunny.gif" alt="Happy Bunny">
                 <h1 style="font-size:3.5rem; color:#8b3a51;">Yay! ❤️ Best Valentine's Ever!</h1>
-                <p style="font-size:1.5rem; color:#8b3a51;">See you on the 14th, Julie!</p>
+                <p style="font-size:1.5rem; color:#8b3a51;">See you on the 14th, Julieboo!</p>
             `;
-            noBtn.style.display = 'none';
+            if(noBtn) noBtn.style.display = 'none';
         }
     </script>
 </body>
