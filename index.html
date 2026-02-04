@@ -41,7 +41,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 40px;
+            gap: 25px;
             height: 60px;
             width: 100%;
         }
@@ -63,10 +63,10 @@
 
         #noBtn {
             background-color: #8c8c8c;
-            /* Using fixed and transition for that smooth, hard-to-catch slide */
-            position: fixed; 
+            position: absolute;
             z-index: 100;
-            transition: all 0.15s ease-out;
+            /* Fast transition makes it look like it's sliding away at high speed */
+            transition: all 0.1s ease-out; 
         }
     </style>
 </head>
@@ -83,19 +83,7 @@
 
     <script>
         const noBtn = document.getElementById('noBtn');
-        const yesBtn = document.getElementById('yesBtn');
-
-        // This sets the No button right next to the Yes button as soon as the page loads
-        function setInitialPosition() {
-            const yesRect = yesBtn.getBoundingClientRect();
-            noBtn.style.left = (yesRect.right + 40) + 'px';
-            noBtn.style.top = yesRect.top + 'px';
-        }
-
-        window.onload = setInitialPosition;
-        window.onresize = setInitialPosition;
-
-        const range = 200; 
+        const detectionRange = 200; // Large detection zone
 
         document.addEventListener('mousemove', (e) => {
             const mouseX = e.clientX;
@@ -107,17 +95,18 @@
 
             const distance = Math.hypot(mouseX - btnCenterX, mouseY - btnCenterY);
 
-            if (distance < range) {
+            // If the cursor enters the 200px zone, the button "flees"
+            if (distance < detectionRange) {
                 const angle = Math.atan2(mouseY - btnCenterY, mouseX - btnCenterX);
                 
-                // Moves in the opposite direction of the mouse
+                // Calculate new position in the opposite direction of the mouse
                 let newX = btnCenterX - Math.cos(angle) * 300;
                 let newY = btnCenterY - Math.sin(angle) * 300;
 
-                // Keeps it within bounds
-                const p = 50;
-                newX = Math.max(p, Math.min(newX, window.innerWidth - btnRect.width - p));
-                newY = Math.max(p, Math.min(newY, window.innerHeight - btnRect.height - p));
+                // Keep it within the screen boundaries
+                const padding = 50;
+                newX = Math.max(padding, Math.min(newX, window.innerWidth - btnRect.width - padding));
+                newY = Math.max(padding, Math.min(newY, window.innerHeight - btnRect.height - padding));
 
                 noBtn.style.left = `${newX}px`;
                 noBtn.style.top = `${newY}px`;
@@ -129,7 +118,7 @@
             content.innerHTML = `
                 <img src="bunny.gif" alt="Happy Bunny">
                 <h1 style="font-size:3.5rem; color:#8b3a51;">Yay! ❤️ Best Valentine's Ever!</h1>
-                <p style="font-size:1.5rem; color:#8b3a51;">See you on the 14th, Julie!</p>
+                <p style="font-size:1.5rem; color:#8b3a51;">See you on the 14th, Julieboo!</p>
             `;
             noBtn.style.display = 'none';
         }
